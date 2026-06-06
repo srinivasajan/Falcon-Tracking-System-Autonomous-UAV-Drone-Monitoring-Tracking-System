@@ -489,3 +489,5 @@ dronecontrol.db*
 etc
 dataman
 test_data
+Installer/Output/
+Publish/
