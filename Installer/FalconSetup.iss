@@ -3,7 +3,7 @@
 #define MyAppPublisher "srinivasajan"
 #define MyAppURL "https://github.com/srinivasajan/Falcon-Tracking-System-Autonomous-UAV-Drone-Monitoring-Tracking-System"
 #define MyAppExeName "DroneControl.UI.exe"
-#define MySourceDir "C:\Personal Coding\Projects\Falcon Drone System\Publish\FalconDroneSystem"
+#define MySourceDir "C:\Personal Coding\Projects\Falcon Drone System\DroneControl\DroneControl.UI\bin\Release\net8.0-windows\win-x64\publish"
 #define MyOutputDir "C:\Personal Coding\Projects\Falcon Drone System\Installer\Output"
 
 [Setup]

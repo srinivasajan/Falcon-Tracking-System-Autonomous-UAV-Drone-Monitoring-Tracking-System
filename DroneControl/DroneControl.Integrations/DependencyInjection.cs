@@ -23,6 +23,7 @@ public static class DependencyInjection
         services.AddSingleton<ITrackingProvider,  TemporaryMockTrackingProvider>();
         services.AddSingleton<IVideoProvider,     FfmpegVideoProvider>();
         services.AddSingleton<IVideoRecorderService, VideoRecorderService>();
+        services.AddSingleton<IDroneProvider,     DroneControl.Integrations.Demo.DemoDroneProvider>();
         return services;
     }
 

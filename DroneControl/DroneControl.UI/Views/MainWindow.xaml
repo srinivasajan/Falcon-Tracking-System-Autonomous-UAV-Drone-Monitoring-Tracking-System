@@ -3,456 +3,524 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mapsui="clr-namespace:Mapsui.UI.Wpf;assembly=Mapsui.UI.Wpf"
         xmlns:ffme="clr-namespace:Unosquare.FFME;assembly=ffme.win"
-        Title="DroneControl"
-        Height="820"
-        Width="1280"
-        MinHeight="720"
-        MinWidth="1100"
-        Background="{StaticResource SurfaceBrush}">
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+        Title="Falcon Drone System"
+        Height="860" Width="1360"
+        MinHeight="760" MinWidth="1200"
+        Background="#0F172A"
+        FontFamily="Segoe UI">
+    
+    <Window.Resources>
+        <SolidColorBrush x:Key="BgDark" Color="#0F172A" />
+        <SolidColorBrush x:Key="PanelDark" Color="#1E293B" />
+        <SolidColorBrush x:Key="PanelLighter" Color="#334155" />
+        <SolidColorBrush x:Key="AccentColor" Color="#3B82F6" />
+        <SolidColorBrush x:Key="SuccessColor" Color="#10B981" />
+        <SolidColorBrush x:Key="WarningColor" Color="#F59E0B" />
+        <SolidColorBrush x:Key="ErrorColor" Color="#EF4444" />
+        <SolidColorBrush x:Key="TextPrimary" Color="#F8FAFC" />
+        <SolidColorBrush x:Key="TextSecondary" Color="#94A3B8" />
 
-        <DockPanel Margin="0,0,0,16">
-            <StackPanel DockPanel.Dock="Left">
-                <TextBlock Text="DroneControl" FontSize="30" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" />
-                <TextBlock Text="Provider-based operations dashboard" FontSize="14" Foreground="#667085" />
-            </StackPanel>
+        <Style x:Key="HeroButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="24,12"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2563EB"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Start Providers" Command="{Binding StartProvidersCommand}" Padding="18,9" Margin="0,0,10,0" ToolTip="Starts all drone, vision, tracking, telemetry, and mission services." />
-                <Button Content="Stop" Command="{Binding StopProvidersCommand}" Padding="18,9" ToolTip="Stops all running services and disconnects from the drone." />
-            </StackPanel>
-        </DockPanel>
+        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource HeroButton}">
+            <Setter Property="Background" Value="{StaticResource PanelLighter}"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#475569"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
-        <TabControl Grid.Row="1">
-            <TabItem Header="Dashboard">
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource PanelDark}"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+        </Style>
+        
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Window.Resources>
+
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" /> <!-- Left Panel: Getting Started, Status, Feed -->
-            <ColumnDefinition Width="2.5*" /> <!-- Center Panel: Camera Feed & Empty State -->
-            <ColumnDefinition Width="1.5*" /> <!-- Right Panel: Drone Status, Pursuit Controls, Telemetry -->
-        </Grid.ColumnDefinitions>
+        <!-- LANDING VIEW -->
+        <Grid>
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentView}" Value="Landing">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="800">
+                <TextBlock Text="Falcon Drone System" FontSize="48" FontWeight="Bold" Foreground="{StaticResource TextPrimary}" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                <TextBlock Text="Autonomous Target Detection, Tracking &amp; Pursuit" FontSize="20" Foreground="{StaticResource TextSecondary}" HorizontalAlignment="Center" Margin="0,0,0,64"/>
 
-        <!-- Left Panel -->
-        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Margin="0,0,16,0">
-            <StackPanel>
-                <!-- Getting Started Guide -->
-                <Expander Header="Getting Started" IsExpanded="True" Foreground="White" Background="{StaticResource PanelBrush}" Margin="0,0,0,16">
-                    <StackPanel Margin="10">
-                        <CheckBox Content="1. Start Providers" IsChecked="{Binding IsStep1Complete, Mode=OneWay}" IsHitTestVisible="False" Foreground="White" Margin="0,4"/>
-                        <CheckBox Content="2. Connect Drone/Sim" IsChecked="{Binding IsStep2Complete, Mode=OneWay}" IsHitTestVisible="False" Foreground="White" Margin="0,4"/>
-                        <CheckBox Content="3. Target Detected" IsChecked="{Binding IsStep3Complete, Mode=OneWay}" IsHitTestVisible="False" Foreground="White" Margin="0,4"/>
-                        <CheckBox Content="4. Target Locked" IsChecked="{Binding IsStep4Complete, Mode=OneWay}" IsHitTestVisible="False" Foreground="White" Margin="0,4"/>
-                        <CheckBox Content="5. Auto Pursuit Enabled" IsChecked="{Binding IsStep5Complete, Mode=OneWay}" IsHitTestVisible="False" Foreground="White" Margin="0,4"/>
-                        <CheckBox Content="6. Telemetry Received" IsChecked="{Binding IsStep6Complete, Mode=OneWay}" IsHitTestVisible="False" Foreground="White" Margin="0,4"/>
-                        
-                        <Button Content="Run Demo Mode" Command="{Binding RunDemoCommand}" Margin="0,15,0,0" Padding="8,5" ToolTip="Runs a 10s simulation of the full tracking pipeline without real hardware."/>
-                    </StackPanel>
-                </Expander>
+                <UniformGrid Columns="3" HorizontalAlignment="Stretch" Margin="0,0,0,40">
+                    <!-- Demo Mode Card -->
+                    <Border Style="{StaticResource CardStyle}" Margin="10">
+                        <StackPanel>
+                            <TextBlock Text="Demo Mode" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" Margin="0,0,0,12"/>
+                            <TextBlock Text="Simulates a complete tracking pipeline without any hardware or network connections. Starts instantly." TextWrapping="Wrap" Foreground="{StaticResource TextSecondary}" Height="60" Margin="0,0,0,24"/>
+                            <Button Content="Run Demo" Command="{Binding SelectDemoModeCommand}" Style="{StaticResource HeroButton}"/>
+                        </StackPanel>
+                    </Border>
 
-                <!-- System Status -->
-                <Border Background="{StaticResource PanelBrush}" CornerRadius="8" Padding="14" Margin="0,0,0,16">
-                    <StackPanel>
-                        <TextBlock Text="System Status" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10" Foreground="White" />
-                        <UniformGrid Columns="2" Rows="6">
-                            <TextBlock Text="Drone:" Foreground="#B7C9D1"/>
-                            <TextBlock Text="{Binding ConnectionStatus}" Foreground="{StaticResource AccentBrush}"/>
-                            <TextBlock Text="Vision:" Foreground="#B7C9D1"/>
-                            <TextBlock Text="{Binding VisionSystemStatus}" Foreground="White"/>
-                            <TextBlock Text="Detection:" Foreground="#B7C9D1"/>
-                            <TextBlock Text="{Binding TargetDetectionStatus}" Foreground="White"/>
-                            <TextBlock Text="Tracker:" Foreground="#B7C9D1"/>
-                            <TextBlock Text="{Binding TrackerStatus}" Foreground="White"/>
-                            <TextBlock Text="Navigation:" Foreground="#B7C9D1"/>
-                            <TextBlock Text="{Binding NavigationStatus}" Foreground="White"/>
-                            <TextBlock Text="Safety:" Foreground="#B7C9D1"/>
-                            <TextBlock Text="{Binding SafetyStatus}" Foreground="#35D0BA"/>
-                        </UniformGrid>
-                    </StackPanel>
-                </Border>
+                    <!-- Simulation Mode Card -->
+                    <Border Style="{StaticResource CardStyle}" Margin="10">
+                        <StackPanel>
+                            <TextBlock Text="Simulation" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" Margin="0,0,0,12"/>
+                            <TextBlock Text="Connects to local PX4 SITL and Gazebo. Requires WSL and physics engine running locally." TextWrapping="Wrap" Foreground="{StaticResource TextSecondary}" Height="60" Margin="0,0,0,24"/>
+                            <Button Content="Start Simulator" Command="{Binding SelectSimulationModeCommand}" Style="{StaticResource SecondaryButton}"/>
+                        </StackPanel>
+                    </Border>
 
-                <!-- Operator Event Feed -->
-                <Border Background="{StaticResource PanelBrush}" CornerRadius="8" Padding="14">
-                    <StackPanel>
-                        <TextBlock Text="Operator Event Feed" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10" Foreground="White" />
-                        <ItemsControl ItemsSource="{Binding EventFeed}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Margin="0,0,0,4" Foreground="#B7C9D1" TextWrapping="Wrap">
-                                        <Run Text="{Binding Timestamp, StringFormat='HH:mm:ss '}" Foreground="#667085"/>
-                                        <Run Text="{Binding Message}"/>
-                                    </TextBlock>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </Border>
+                    <!-- Real Drone Mode Card -->
+                    <Border Style="{StaticResource CardStyle}" Margin="10">
+                        <StackPanel>
+                            <TextBlock Text="Real Hardware" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" Margin="0,0,0,12"/>
+                            <TextBlock Text="Connect to a live MAVLink datalink via UDP/Serial to command a physical airframe." TextWrapping="Wrap" Foreground="{StaticResource TextSecondary}" Height="60" Margin="0,0,0,24"/>
+                            <Button Content="Connect Drone" Command="{Binding SelectRealDroneModeCommand}" Style="{StaticResource SecondaryButton}"/>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
             </StackPanel>
-        </ScrollViewer>
+        </Grid>
 
-        <!-- Center Panel: Camera Feed -->
-        <Border Grid.Column="1" Background="#101820" CornerRadius="8" Padding="16" Margin="0,0,16,16">
-            <Grid>
-                <TextBlock Text="OPERATOR CAMERA VIEW" Foreground="#B7C9D1" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Left" VerticalAlignment="Top" />
-                
-                <!-- Empty State -->
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding HasCameraFeed}" Value="False">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
-                    <TextBlock Text="No camera feed available." Foreground="White" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                    <TextBlock Text="To begin:" Foreground="#B7C9D1" FontSize="16" Margin="0,0,0,5"/>
-                    <TextBlock Text="1. Click 'Start Providers' (top right)" Foreground="#B7C9D1" FontSize="16" Margin="10,2,0,2"/>
-                    <TextBlock Text="2. Connect to Simulation or Drone" Foreground="#B7C9D1" FontSize="16" Margin="10,2,0,2"/>
-                    <TextBlock Text="3. Wait for vision processing to start" Foreground="#B7C9D1" FontSize="16" Margin="10,2,0,2"/>
+        <!-- DASHBOARD VIEW -->
+        <Grid Margin="20">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentView}" Value="Dashboard">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <DockPanel Margin="0,0,0,20">
+                <StackPanel DockPanel.Dock="Left">
+                    <TextBlock Text="Falcon Control Dashboard" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" />
+                    <TextBlock Foreground="{StaticResource TextSecondary}">
+                        <Run Text="Active Mode: "/>
+                        <Run Text="{Binding ActiveMode}" FontWeight="Bold" Foreground="{StaticResource AccentColor}"/>
+                    </TextBlock>
                 </StackPanel>
 
-                <!-- Video Feed -->
-                <Grid Margin="0,32,0,0">
-                    <Grid.Style>
-                        <Style TargetType="Grid">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding HasCameraFeed}" Value="False">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Grid.Style>
-                    <ffme:MediaElement x:Name="LiveVideo" Background="#17242E" LoadedBehavior="Play" />
-                    <Canvas Background="Transparent">
-                        <ItemsControl ItemsSource="{Binding Detections}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <Canvas />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemContainerStyle>
-                                <Style TargetType="ContentPresenter">
-                                    <Setter Property="Canvas.Left" Value="{Binding X}" />
-                                    <Setter Property="Canvas.Top" Value="{Binding Y}" />
-                                </Style>
-                            </ItemsControl.ItemContainerStyle>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button Command="{Binding DataContext.LockTargetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                            CommandParameter="{Binding}"
-                                            Background="Transparent"
-                                            BorderBrush="#35D0BA"
-                                            BorderThickness="2"
-                                            ToolTip="Select this detected target for continuous tracking"
-                                            Width="{Binding Width}"
-                                            Height="{Binding Height}">
-                                        <StackPanel VerticalAlignment="Top" Background="#CC101820">
-                                            <TextBlock Text="{Binding ObjectType}" Foreground="White" FontWeight="SemiBold" Margin="4,2" />
-                                            <TextBlock Text="{Binding Confidence, StringFormat={}{0:P0}}" Foreground="#35D0BA" Margin="4,0,4,2" />
-                                        </StackPanel>
-                                    </Button>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </Canvas>
-                </Grid>
-                
-                <TextBlock Text="{Binding FrameLabel}" Foreground="#B7C9D1" FontFamily="Consolas" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
-            </Grid>
-        </Border>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Abort Mission" Command="{Binding LandCommand}" Style="{StaticResource HeroButton}" Background="{StaticResource ErrorColor}" Margin="0,0,10,0"/>
+                    <Button Content="Stop Systems" Command="{Binding StopProvidersCommand}" Style="{StaticResource SecondaryButton}"/>
+                </StackPanel>
+            </DockPanel>
 
-        <!-- Right Panel: Drone Status, Pursuit, Telemetry -->
-        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" Margin="0,0,0,16">
-            <StackPanel>
-                <!-- Autonomous Pursuit Controls -->
-                <Border Background="{StaticResource PanelBrush}" CornerRadius="8" Padding="18" Margin="0,0,0,16">
-                    <StackPanel>
-                        <TextBlock Text="Autonomous Pursuit" FontSize="20" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,14" />
-                        <TextBlock Text="{Binding AutoTrackingStatusLabel}" Foreground="{StaticResource AccentBrush}" FontSize="16" FontWeight="Bold" Margin="0,0,0,10" />
-                        
-                        <UniformGrid Columns="2" Rows="2" Margin="0,0,0,16">
-                            <TextBlock Text="Target Class:" Foreground="#B7C9D1"/>
-                            <TextBlock Text="{Binding TargetClassLabel}" Foreground="White" FontWeight="Bold"/>
-                            <TextBlock Text="Confidence:" Foreground="#B7C9D1"/>
-                            <TextBlock Text="{Binding TargetConfidenceLabel}" Foreground="White" FontWeight="Bold"/>
-                        </UniformGrid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="320" /> <!-- Left: Onboarding / Events -->
+                    <ColumnDefinition Width="2.5*" /> <!-- Center: Camera -->
+                    <ColumnDefinition Width="1.5*" /> <!-- Right: Status / Controls -->
+                </Grid.ColumnDefinitions>
 
-                        <UniformGrid Columns="2">
-                            <Button Content="▶ Start Pursuit" Command="{Binding StartAutoTrackingCommand}" Padding="12,12" Margin="0,0,4,0" Background="#1B4D3E" ToolTip="Engages autopilot to physically follow the locked target." />
-                            <Button Content="■ Stop Pursuit" Command="{Binding StopAutoTrackingCommand}" Padding="12,12" Margin="4,0,0,0" Background="#7B1818" ToolTip="Disengages autopilot tracking. Drone will hold position."/>
-                        </UniformGrid>
-                    </StackPanel>
-                </Border>
-
-                <!-- Drone Flight Controls -->
-                <Border Background="{StaticResource PanelBrush}" CornerRadius="8" Padding="18" Margin="0,0,0,16">
-                    <StackPanel>
-                        <TextBlock Text="Flight Controls" FontSize="20" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,14" />
-                        
-                        <Grid Margin="0,0,0,16">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="Battery" Foreground="#B7C9D1"/>
-                                <TextBlock Text="{Binding BatteryLabel}" Foreground="White"/>
+                <!-- LEFT COLUMN: ONBOARDING & FEED -->
+                <Grid Grid.Column="0" Margin="0,0,20,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Guided Onboarding" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" Margin="0,0,0,16" />
+                            
+                            <!-- Demo Progress Header (Only visible in Demo Mode) -->
+                            <StackPanel Margin="0,0,0,16">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsDemoModeActive}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <DockPanel Margin="0,0,0,8">
+                                    <TextBlock Text="{Binding DemoStageText}" Foreground="{StaticResource AccentColor}" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding DemoTimeRemaining, StringFormat='{}Remaining: {0}'}" Foreground="{StaticResource TextSecondary}" HorizontalAlignment="Right"/>
+                                </DockPanel>
+                                <ProgressBar Value="{Binding DemoProgress}" Maximum="100" Height="6" Background="{StaticResource PanelLighter}" Foreground="{StaticResource AccentColor}" BorderThickness="0" />
                             </StackPanel>
-                            <ProgressBar Grid.Column="1" Value="{Binding BatteryPercent, Mode=OneWay}" Maximum="100" Width="100" Height="14" VerticalAlignment="Center" />
-                        </Grid>
-                        
-                        <UniformGrid Columns="2" Rows="3" Margin="0,0,0,16">
-                            <TextBlock Text="Altitude:" Foreground="#B7C9D1"/>
-                            <TextBlock Text="{Binding Altitude}" Foreground="White" FontWeight="Bold"/>
-                            <TextBlock Text="Speed:" Foreground="#B7C9D1"/>
-                            <TextBlock Text="{Binding Speed}" Foreground="White" FontWeight="Bold"/>
-                            <TextBlock Text="Flight Mode:" Foreground="#B7C9D1"/>
-                            <TextBlock Text="{Binding FlightMode}" Foreground="{StaticResource AccentBrush}" FontWeight="Bold"/>
-                        </UniformGrid>
 
-                        <UniformGrid Columns="2">
-                            <Button Content="Arm" Command="{Binding ArmCommand}" Padding="12,8" Margin="0,0,4,4" ToolTip="Arms the vehicle's motors."/>
-                            <Button Content="Takeoff" Command="{Binding TakeoffCommand}" Padding="12,8" Margin="4,0,0,4" ToolTip="Commands the drone to automatically take off and hover."/>
-                            <Button Content="Disarm" Command="{Binding DisarmCommand}" Padding="12,8" Margin="0,4,4,0" ToolTip="Disarms the vehicle's motors."/>
-                            <Button Content="Land" Command="{Binding LandCommand}" Padding="12,8" Margin="4,4,0,0" ToolTip="Commands the drone to land at its current location."/>
-                        </UniformGrid>
-                    </StackPanel>
-                </Border>
+                            <!-- Checklists -->
+                            <StackPanel>
+                                <StackPanel.Resources>
+                                    <Style TargetType="CheckBox">
+                                        <Setter Property="Margin" Value="0,8"/>
+                                        <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+                                        <Setter Property="IsHitTestVisible" Value="False"/>
+                                    </Style>
+                                </StackPanel.Resources>
+                                <CheckBox IsChecked="{Binding IsStep1Complete, Mode=OneWay}">
+                                    <StackPanel Margin="8,0,0,0">
+                                        <TextBlock Text="Providers Started" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Vision and tracking engines initialized" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                    </StackPanel>
+                                </CheckBox>
+                                <CheckBox IsChecked="{Binding IsStep2Complete, Mode=OneWay}">
+                                    <StackPanel Margin="8,0,0,0">
+                                        <TextBlock Text="Drone Connected" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Telemetry link established" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                    </StackPanel>
+                                </CheckBox>
+                                <CheckBox IsChecked="{Binding IsStep3Complete, Mode=OneWay}">
+                                    <StackPanel Margin="8,0,0,0">
+                                        <TextBlock Text="Target Detected" FontWeight="SemiBold"/>
+                                        <TextBlock Text="YOLO network found a valid object" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                    </StackPanel>
+                                </CheckBox>
+                                <CheckBox IsChecked="{Binding IsStep4Complete, Mode=OneWay}">
+                                    <StackPanel Margin="8,0,0,0">
+                                        <TextBlock Text="Target Locked" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Continuous object tracker engaged" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                    </StackPanel>
+                                </CheckBox>
+                                <CheckBox IsChecked="{Binding IsStep5Complete, Mode=OneWay}">
+                                    <StackPanel Margin="8,0,0,0">
+                                        <TextBlock Text="Auto Pursuit Active" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Drone is autonomously navigating" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                    </StackPanel>
+                                </CheckBox>
+                                <CheckBox IsChecked="{Binding IsStep6Complete, Mode=OneWay}">
+                                    <StackPanel Margin="8,0,0,0">
+                                        <TextBlock Text="Mission Complete" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Telemetry and video successfully recorded" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                    </StackPanel>
+                                </CheckBox>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
 
-                <!-- Telemetry Stream -->
-                <Border Background="{StaticResource PanelBrush}" CornerRadius="8" Padding="18">
-                    <StackPanel>
-                        <TextBlock Text="Live Telemetry" FontSize="18" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,10" />
-                        
-                        <!-- Empty state for Telemetry -->
-                        <TextBlock Text="Waiting for drone connection..." Foreground="#667085" Margin="0,10,0,10">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
+                    <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Operator Events" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" Margin="0,0,0,16" />
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding EventFeed}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="0,0,0,8" TextWrapping="Wrap">
+                                                <Run Text="{Binding Timestamp, StringFormat='HH:mm:ss'}" Foreground="{StaticResource TextSecondary}"/>
+                                                <Run Text=" "/>
+                                                <Run Text="{Binding Message}" Foreground="{StaticResource TextPrimary}"/>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- CENTER COLUMN: CAMERA FEED -->
+                <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="0,0,20,16" Padding="0" ClipToBounds="True">
+                    <Grid>
+                        <!-- Empty / Loading State -->
+                        <Grid ZIndex="0">
+                            <Grid.Style>
+                                <Style TargetType="Grid">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding HasTelemetry}" Value="False">
+                                        <DataTrigger Binding="{Binding HasCameraFeed}" Value="False">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
+                            </Grid.Style>
+                            <Border Background="#000000" CornerRadius="12"/>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                
+                                <Path Data="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM11 7H13V13H11V7ZM11 15H13V17H11V15Z" 
+                                      Fill="{StaticResource TextSecondary}" Width="64" Height="64" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,0,0,16"/>
+                                <TextBlock Text="Camera Feed Unavailable" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                                <TextBlock Text="The vision pipeline is currently waiting for video frames." Foreground="{StaticResource TextSecondary}" HorizontalAlignment="Center" Margin="0,0,0,24"/>
+                                
+                                <Button Content="Check Connection Status" Command="{Binding RefreshRuntimeValidationCommand}" Style="{StaticResource SecondaryButton}" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
 
-                        <ItemsControl ItemsSource="{Binding TelemetryLog}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}" FontFamily="Consolas" FontSize="12" Margin="0,0,0,5" Foreground="#B7C9D1" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
+                        <!-- Live Video Feed -->
+                        <Grid ZIndex="1">
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasCameraFeed}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+
+                            <!-- Synthetic Demo Video Background -->
+                            <Grid>
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsDemoModeActive}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+                                <Grid.Background>
+                                    <DrawingBrush Viewport="0,0,50,50" ViewportUnits="Absolute" TileMode="Tile">
+                                        <DrawingBrush.Drawing>
+                                            <GeometryDrawing>
+                                                <GeometryDrawing.Pen>
+                                                    <Pen Brush="#334155" Thickness="1"/>
+                                                </GeometryDrawing.Pen>
+                                                <GeometryDrawing.Geometry>
+                                                    <GeometryGroup>
+                                                        <LineGeometry StartPoint="0,0" EndPoint="50,0"/>
+                                                        <LineGeometry StartPoint="0,0" EndPoint="0,50"/>
+                                                    </GeometryGroup>
+                                                </GeometryDrawing.Geometry>
+                                            </GeometryDrawing>
+                                        </DrawingBrush.Drawing>
+                                    </DrawingBrush>
+                                </Grid.Background>
+                                <TextBlock Text="SIMULATED CAMERA FEED" FontSize="48" FontWeight="Bold" Foreground="#1AFFFFFF" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </Grid>
+
+                            <ffme:MediaElement x:Name="LiveVideo" Background="Transparent" LoadedBehavior="Play" />
+                            
+                            <!-- Bounding Boxes Overlay -->
+                            <Canvas Background="Transparent">
+                                <ItemsControl ItemsSource="{Binding TrackedObjectsForUI}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style TargetType="ContentPresenter">
+                                            <Setter Property="Canvas.Left" Value="{Binding X}" />
+                                            <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Command="{Binding DataContext.LockTargetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"
+                                                    Background="Transparent"
+                                                    BorderThickness="3"
+                                                    Cursor="Hand"
+                                                    Width="{Binding Width}"
+                                                    Height="{Binding Height}">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="BorderBrush" Value="#3B82F6"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsLocked}" Value="True">
+                                                                <Setter Property="BorderBrush" Value="{StaticResource SuccessColor}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                                                            <Grid>
+                                                                <!-- Synthetic Target (Visible in Demo) -->
+                                                                <Path Data="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" 
+                                                                      Fill="{TemplateBinding BorderBrush}" Stretch="Uniform" Margin="10" Opacity="0.5">
+                                                                    <Path.Style>
+                                                                        <Style TargetType="Path">
+                                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding DataContext.IsDemoModeActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Path.Style>
+                                                                </Path>
+                                                                
+                                                                <StackPanel VerticalAlignment="Top" Background="#E60F172A" Margin="-3,-30,-3,0" Orientation="Horizontal" HorizontalAlignment="Left">
+                                                                    <TextBlock Text="{Binding Label}" Foreground="White" FontWeight="Bold" Margin="8,4,8,4" />
+                                                                    <TextBlock Text="{Binding Confidence, StringFormat={}{0:P0}}" Foreground="{StaticResource SuccessColor}" Margin="0,4,8,4" />
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Canvas>
+                            
+                            <!-- Frame Data Label -->
+                            <Border Background="#990F172A" Padding="12,6" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="16" CornerRadius="6">
+                                <TextBlock Text="{Binding FrameLabel}" Foreground="{StaticResource TextSecondary}" FontFamily="Consolas" FontSize="12" />
+                            </Border>
+                        </Grid>
+                    </Grid>
                 </Border>
-            </StackPanel>
-        </ScrollViewer>
-    </Grid>
-</TabItem>
-            
-            <TabItem Header="Mission Planner">
-                <Grid Background="{StaticResource SurfaceBrush}" Margin="0,14,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="300" />
-                    </Grid.ColumnDefinitions>
-                    
-                    <Border Grid.Column="0" CornerRadius="8" ClipToBounds="True" Margin="0,0,14,0" Background="#101820">
-                        <mapsui:MapControl x:Name="MapControl" />
-                    </Border>
-                    
-                    <Border Grid.Column="1" Background="{StaticResource PanelBrush}" CornerRadius="8" Padding="14">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            
-                            <TextBlock Text="Mission Planning" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,10" />
-                            <TextBlock Grid.Row="1" Text="Click the map to place waypoints." Foreground="#667085" Margin="0,0,0,10" TextWrapping="Wrap" />
-                            
-                            <ListBox Grid.Row="2" ItemsSource="{Binding MissionWaypoints}" SelectedItem="{Binding SelectedWaypoint}" Background="Transparent" BorderThickness="0" Margin="0,0,0,10">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Background="#17242E" CornerRadius="4" Padding="10" Margin="0,0,0,5" MinWidth="260">
-                                            <StackPanel>
-                                                <TextBlock Text="{Binding Sequence, StringFormat=Waypoint {0}}" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
-                                                <TextBlock Text="{Binding Latitude, StringFormat=Lat: {0:F5}}" Foreground="#B7C9D1" />
-                                                <TextBlock Text="{Binding Longitude, StringFormat=Lon: {0:F5}}" Foreground="#B7C9D1" />
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                            
-                            <StackPanel Grid.Row="3">
-                                <Button Content="Remove Selected" Command="{Binding RemoveWaypointCommand}" Padding="12,8" Margin="0,0,0,8" />
-                                <UniformGrid Columns="2">
-                                    <Button Content="Save Mission" Command="{Binding SaveMissionCommand}" Padding="12,8" Margin="0,0,4,0" />
-                                    <Button Content="Load Mission" Command="{Binding LoadMissionCommand}" Padding="12,8" Margin="4,0,0,0" />
+
+                <!-- RIGHT COLUMN: STATUS & CONTROLS -->
+                <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        
+                        <!-- Real-time Status Cards -->
+                        <UniformGrid Columns="2" Rows="2" Margin="0,0,0,16">
+                            <Border Style="{StaticResource CardStyle}" Margin="0,0,8,8">
+                                <StackPanel>
+                                    <TextBlock Text="Drone Status" Foreground="{StaticResource TextSecondary}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                    <TextBlock Text="{Binding ConnectionStatus}" Foreground="{StaticResource TextPrimary}" FontWeight="Bold" FontSize="14" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource CardStyle}" Margin="8,0,0,8">
+                                <StackPanel>
+                                    <TextBlock Text="Vision Pipeline" Foreground="{StaticResource TextSecondary}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                    <TextBlock Text="{Binding VisionSystemStatus}" Foreground="{StaticResource TextPrimary}" FontWeight="Bold" FontSize="14"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource CardStyle}" Margin="0,8,8,0">
+                                <StackPanel>
+                                    <TextBlock Text="Target Tracker" Foreground="{StaticResource TextSecondary}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                    <TextBlock Text="{Binding TargetLockLabel}" Foreground="{StaticResource TextPrimary}" FontWeight="Bold" FontSize="14" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource CardStyle}" Margin="8,8,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="Navigation" Foreground="{StaticResource TextSecondary}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                    <TextBlock Text="{Binding NavigationStatus}" Foreground="{StaticResource TextPrimary}" FontWeight="Bold" FontSize="14"/>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
+
+                        <!-- Autonomous Pursuit -->
+                        <Border Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Autonomous Pursuit" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" Margin="0,0,0,16" />
+                                
+                                <Grid Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Locked Target" Foreground="{StaticResource TextSecondary}" FontSize="12"/>
+                                        <TextBlock Text="{Binding TargetClassLabel}" Foreground="{StaticResource TextPrimary}" FontWeight="Bold"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Status" Foreground="{StaticResource TextSecondary}" FontSize="12"/>
+                                        <TextBlock Text="{Binding AutoTrackingStatusLabel}" Foreground="{StaticResource AccentColor}" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0" Content="Engage Pursuit" Command="{Binding StartAutoTrackingCommand}" Style="{StaticResource HeroButton}" Background="{StaticResource SuccessColor}"/>
+                                    <Button Grid.Column="2" Content="Hold Position" Command="{Binding StopAutoTrackingCommand}" Style="{StaticResource SecondaryButton}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Telemetry -->
+                        <Border Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Telemetry" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" Margin="0,0,0,16" />
+                                
+                                <Grid Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Altitude" Foreground="{StaticResource TextSecondary}" FontSize="12"/>
+                                        <TextBlock Text="{Binding Altitude}" Foreground="{StaticResource TextPrimary}" FontWeight="Bold" FontSize="18"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Speed" Foreground="{StaticResource TextSecondary}" FontSize="12"/>
+                                        <TextBlock Text="{Binding Speed}" Foreground="{StaticResource TextPrimary}" FontWeight="Bold" FontSize="18"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="Battery" Foreground="{StaticResource TextSecondary}" FontSize="12"/>
+                                        <TextBlock Text="{Binding BatteryLabel}" Foreground="{StaticResource SuccessColor}" FontWeight="Bold" FontSize="18"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <TextBlock Text="Raw Stream" Foreground="{StaticResource TextSecondary}" FontSize="12" Margin="0,0,0,8"/>
+                                <Border Background="#000000" CornerRadius="6" Padding="12" Height="100">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl ItemsSource="{Binding TelemetryLog}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding}" FontFamily="Consolas" FontSize="11" Foreground="{StaticResource SuccessColor}" Margin="0,0,0,4"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Flight Controls -->
+                        <Border Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Manual Override" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" Margin="0,0,0,16" />
+                                <UniformGrid Columns="2" Rows="2">
+                                    <Button Content="Arm Motors" Command="{Binding ArmCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                                    <Button Content="Disarm Motors" Command="{Binding DisarmCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,0,8"/>
+                                    <Button Content="Takeoff" Command="{Binding TakeoffCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0"/>
+                                    <Button Content="Land" Command="{Binding LandCommand}" Style="{StaticResource SecondaryButton}"/>
                                 </UniformGrid>
                             </StackPanel>
-                        </Grid>
-                    </Border>
-                </Grid>
-            </TabItem>
-            
-            <TabItem Header="Runtime Validation">
-                <Grid Background="{StaticResource SurfaceBrush}" Margin="0,14,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <DockPanel Margin="0,0,0,14">
-                        <StackPanel DockPanel.Dock="Left">
-                            <TextBlock Text="Runtime Validation" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" />
-                            <TextBlock Text="Deployment feasibility status for managed external runtimes" Foreground="#667085" />
-                        </StackPanel>
-                        <Button DockPanel.Dock="Right"
-                                Content="Refresh"
-                                Command="{Binding RefreshRuntimeValidationCommand}"
-                                Padding="18,9"
-                                HorizontalAlignment="Right" />
-                    </DockPanel>
-
-                    <Border Grid.Row="1" Background="{StaticResource PanelBrush}" CornerRadius="8" Padding="14">
-                        <DataGrid ItemsSource="{Binding RuntimeValidationItems}"
-                                  AutoGenerateColumns="False"
-                                  CanUserAddRows="False"
-                                  CanUserDeleteRows="False"
-                                  IsReadOnly="True"
-                                  GridLinesVisibility="Horizontal"
-                                  HeadersVisibility="Column">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Dependency" Binding="{Binding Dependency}" Width="2*" />
-                                <DataGridTextColumn Header="Installed" Binding="{Binding Installed}" Width="*" />
-                                <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="1.5*" />
-                                <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="*" />
-                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="3*" />
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </Border>
-                </Grid>
-            </TabItem>
-            
-            <TabItem Header="Telemetry Replay">
-                <Grid DataContext="{Binding ReplayViewModel}" Background="{StaticResource SurfaceBrush}" Margin="0,14,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="300" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    
-                    <Border Grid.Column="0" Background="{StaticResource PanelBrush}" CornerRadius="8" Padding="14" Margin="0,0,14,0">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            
-                            <TextBlock Text="Recorded Sessions" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,10" />
-                            <ListBox Grid.Row="1" ItemsSource="{Binding Sessions}" SelectedItem="{Binding SelectedSession}" Background="Transparent" BorderThickness="0" Margin="0,0,0,10">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Background="#17242E" CornerRadius="4" Padding="10" Margin="0,0,0,5" MinWidth="240">
-                                            <StackPanel>
-                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
-                                                <TextBlock Text="{Binding StartTime, StringFormat=G}" Foreground="#B7C9D1" FontSize="11" />
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                            <StackPanel Grid.Row="2">
-                                <Button Content="Load Session" Command="{Binding LoadSelectedSessionCommand}" Padding="12,8" Margin="0,0,0,4" />
-                                <Button Content="Refresh List" Command="{Binding LoadSessionsCommand}" Padding="12,8" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                    
-                    <Border Grid.Column="1" Background="{StaticResource PanelBrush}" CornerRadius="8" Padding="18">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="1.5*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            
-                            <TextBlock Text="Telemetry Readout" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,10" />
-                            
-                            <Border Grid.Row="1" Background="Black" CornerRadius="8" ClipToBounds="True" Margin="0,0,0,10">
-                                <ffme:MediaElement x:Name="ReplayVideo" LoadedBehavior="Pause" />
-                            </Border>
-
-                            <UniformGrid Grid.Row="2" Columns="2" Rows="3" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <StackPanel Margin="20">
-                                    <TextBlock Text="Battery" FontWeight="SemiBold" FontSize="16" HorizontalAlignment="Center" />
-                                    <TextBlock Text="{Binding BatteryLabel}" FontSize="24" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" />
-                                </StackPanel>
-                                <StackPanel Margin="20">
-                                    <TextBlock Text="Speed" FontWeight="SemiBold" FontSize="16" HorizontalAlignment="Center" />
-                                    <TextBlock Text="{Binding Speed}" FontSize="24" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" />
-                                </StackPanel>
-                                <StackPanel Margin="20">
-                                    <TextBlock Text="Altitude" FontWeight="SemiBold" FontSize="16" HorizontalAlignment="Center" />
-                                    <TextBlock Text="{Binding Altitude}" FontSize="24" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" />
-                                </StackPanel>
-                                <StackPanel Margin="20">
-                                    <TextBlock Text="Flight Mode" FontWeight="SemiBold" FontSize="16" HorizontalAlignment="Center" />
-                                    <TextBlock Text="{Binding FlightMode}" FontSize="24" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" />
-                                </StackPanel>
-                                <StackPanel Margin="20">
-                                    <TextBlock Text="Latitude" FontWeight="SemiBold" FontSize="16" HorizontalAlignment="Center" />
-                                    <TextBlock Text="{Binding Latitude}" FontSize="24" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" />
-                                </StackPanel>
-                                <StackPanel Margin="20">
-                                    <TextBlock Text="Longitude" FontWeight="SemiBold" FontSize="16" HorizontalAlignment="Center" />
-                                    <TextBlock Text="{Binding Longitude}" FontSize="24" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" />
-                                </StackPanel>
-                            </UniformGrid>
-                            
-                            <Border Grid.Row="3" Background="#101820" CornerRadius="8" Padding="15">
-                                <StackPanel>
-                                    <DockPanel Margin="0,0,0,10">
-                                        <TextBlock Text="Timeline" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" DockPanel.Dock="Left" VerticalAlignment="Center" />
-                                        <TextBlock Text="{Binding TimelineLabel}" FontFamily="Consolas" Foreground="{StaticResource AccentBrush}" DockPanel.Dock="Right" VerticalAlignment="Center" />
-                                        <Slider Value="{Binding CurrentTimeSeconds}" Maximum="{Binding TotalTimeSeconds}" Minimum="0" Margin="10,0" TickFrequency="1" IsSnapToTickEnabled="False" />
-                                    </DockPanel>
-                                    <DockPanel>
-                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                                            <Button Content="Play" Command="{Binding PlayCommand}" Padding="20,8" Margin="0,0,10,0" Background="#1B4D3E" />
-                                            <Button Content="Pause" Command="{Binding PauseCommand}" Padding="20,8" Background="#7B2CBF" />
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
-                                            <TextBlock Text="Speed:" VerticalAlignment="Center" Margin="0,0,10,0" />
-                                            <ComboBox ItemsSource="{Binding AvailableSpeeds}" SelectedItem="{Binding SelectedPlaybackSpeed}" Width="80" Padding="5">
-                                                <ComboBox.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock Text="{Binding StringFormat={}{0}x}" />
-                                                    </DataTemplate>
-                                                </ComboBox.ItemTemplate>
-                                            </ComboBox>
-                                        </StackPanel>
-                                    </DockPanel>
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-                    </Border>
-                </Grid>
-            </TabItem>
-        </TabControl>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+        
+        <!-- HIDDEN BACKEND PLACEHOLDERS -->
+        <mapsui:MapControl x:Name="MapControl" Visibility="Collapsed" Width="0" Height="0"/>
+        <ffme:MediaElement x:Name="ReplayVideo" Visibility="Collapsed" Width="0" Height="0"/>
     </Grid>
 </Window>

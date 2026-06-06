@@ -101,11 +101,20 @@ public partial class App : Application
             })
             .Build();
 
-        _host.Services.GetRequiredService<StoragePaths>().EnsureCreated();
-        await _host.StartAsync();
+        try
+        {
+            _host.Services.GetRequiredService<StoragePaths>().EnsureCreated();
+            await _host.StartAsync();
 
-        MainWindow = _host.Services.GetRequiredService<MainWindow>();
-        MainWindow.Show();
+            MainWindow = _host.Services.GetRequiredService<MainWindow>();
+            MainWindow.Show();
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText("startup_error.txt", ex.ToString());
+            MessageBox.Show(ex.ToString(), "Startup Error");
+            Environment.Exit(1);
+        }
     }
 
     protected override async void OnExit(ExitEventArgs e)

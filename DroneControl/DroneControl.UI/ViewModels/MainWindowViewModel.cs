@@ -14,10 +14,10 @@ namespace DroneControl.UI.ViewModels;
 
 public sealed class MainWindowViewModel : ObservableObject
 {
-    private readonly IDroneProvider _droneProvider;
-    private readonly ISimulatorProvider _simulatorProvider;
-    private readonly IVisionProvider _visionProvider;
-    private readonly ITrackingProvider _trackingProvider;
+    private IDroneProvider _droneProvider;
+    private ISimulatorProvider _simulatorProvider;
+    private IVisionProvider _visionProvider;
+    private ITrackingProvider _trackingProvider;
     private readonly ICommandPlanner _commandPlanner;
     private readonly IVideoProvider _videoProvider;
     private readonly IVideoRecorderService _videoRecorderService;
@@ -41,6 +41,19 @@ public sealed class MainWindowViewModel : ObservableObject
     private bool _isAutoTracking;
     private bool _isProvidersStarted;
     private bool _isDemoModeActive;
+
+    private bool _isStep1Complete;
+    private bool _isStep2Complete;
+    private bool _isStep3Complete;
+    private bool _isStep4Complete;
+    private bool _isStep5Complete;
+    private bool _isStep6Complete;
+
+    private string _currentView = "Landing";
+    private int _demoProgress;
+    private string _demoStageText = "Ready";
+    private string _demoTimeRemaining = "";
+    private string _activeMode = "None";
 
     // Latest tracker output — used by LockTarget to resolve correct TrackId
     private IReadOnlyList<TrackedObject> _lastTrackedObjects = Array.Empty<TrackedObject>();
@@ -98,8 +111,8 @@ public sealed class MainWindowViewModel : ObservableObject
         DisarmCommand  = new RelayCommand(_ => _ = ExecuteDroneCommandAsync("Disarm",  token => _droneProvider.DisarmAsync(token)));
         TakeoffCommand = new RelayCommand(_ => _ = ExecuteDroneCommandAsync("Takeoff", token => _droneProvider.TakeoffAsync(token)));
         LandCommand    = new RelayCommand(_ => _ = ExecuteDroneCommandAsync("Land",    token => _droneProvider.LandAsync(token)));
-        LockTargetCommand = new RelayCommand(parameter => LockTarget(parameter as DetectionResult),
-                                             parameter => parameter is DetectionResult);
+        LockTargetCommand = new RelayCommand(parameter => LockTarget(parameter as TrackedObjectViewModel),
+                                             parameter => parameter is TrackedObjectViewModel);
 
         RemoveWaypointCommand = new RelayCommand(_ => RemoveSelectedWaypoint(), _ => SelectedWaypoint != null);
         SaveMissionCommand    = new RelayCommand(_ => _ = SaveMissionAsync());
@@ -113,6 +126,10 @@ public sealed class MainWindowViewModel : ObservableObject
 
         RefreshRuntimeValidationCommand = new RelayCommand(_ => _ = RefreshRuntimeValidationAsync());
         RunDemoCommand = new RelayCommand(_ => _ = RunDemoAsync(), _ => !IsDemoModeActive);
+
+        SelectDemoModeCommand = new RelayCommand(_ => { CurrentView = "Dashboard"; ActiveMode = "Demo"; _ = RunDemoAsync(); });
+        SelectSimulationModeCommand = new RelayCommand(_ => { CurrentView = "Dashboard"; ActiveMode = "Simulation"; _ = StartProvidersAsync(); });
+        SelectRealDroneModeCommand = new RelayCommand(_ => { CurrentView = "Dashboard"; ActiveMode = "RealDrone"; _ = StartProvidersAsync(); });
 
         AddEventFeedItem("Application started. Waiting for provider initialization.");
 
@@ -129,7 +146,25 @@ public sealed class MainWindowViewModel : ObservableObject
 
     // ── Collections ──────────────────────────────────────────────────────────
     public ObservableCollection<DetectionResult> Detections { get; } = [];
-    public ObservableCollection<string> TelemetryLog { get; } = [];
+    public ObservableCollection<TrackedObjectViewModel> TrackedObjectsForUI { get; } = [];
+    public bool IsStep1Complete { get => _isStep1Complete; set => SetProperty(ref _isStep1Complete, value); }
+    public bool IsStep2Complete { get => _isStep2Complete; set => SetProperty(ref _isStep2Complete, value); }
+    public bool IsStep3Complete { get => _isStep3Complete; set => SetProperty(ref _isStep3Complete, value); }
+    public bool IsStep4Complete { get => _isStep4Complete; set => SetProperty(ref _isStep4Complete, value); }
+    public bool IsStep5Complete { get => _isStep5Complete; set => SetProperty(ref _isStep5Complete, value); }
+    public bool IsStep6Complete { get => _isStep6Complete; set => SetProperty(ref _isStep6Complete, value); }
+
+    public string CurrentView { get => _currentView; set => SetProperty(ref _currentView, value); }
+    public int DemoProgress { get => _demoProgress; set => SetProperty(ref _demoProgress, value); }
+    public string DemoStageText { get => _demoStageText; set => SetProperty(ref _demoStageText, value); }
+    public string DemoTimeRemaining { get => _demoTimeRemaining; set => SetProperty(ref _demoTimeRemaining, value); }
+    public string ActiveMode { get => _activeMode; set => SetProperty(ref _activeMode, value); }
+
+    public ICommand SelectDemoModeCommand { get; }
+    public ICommand SelectSimulationModeCommand { get; }
+    public ICommand SelectRealDroneModeCommand { get; }
+
+    public ObservableCollection<string> TelemetryLog { get; } = new();
     public ObservableCollection<EventFeedItem> EventFeed { get; } = [];
     public ObservableCollection<RuntimeValidationItemViewModel> RuntimeValidationItems { get; } = [];
     public ObservableCollection<Waypoint> MissionWaypoints { get; } = [];
@@ -189,7 +224,7 @@ public sealed class MainWindowViewModel : ObservableObject
                 OnPropertyChanged(nameof(AutoTrackingStatusLabel));
                 OnPropertyChanged(nameof(NavigationStatus));
                 OnPropertyChanged(nameof(PursuitStateLabel));
-                OnPropertyChanged(nameof(IsStep5Complete));
+                IsStep5Complete = value;
                 if (value) AddEventFeedItem("Autonomous Pursuit Enabled");
             }
         }
@@ -208,7 +243,7 @@ public sealed class MainWindowViewModel : ObservableObject
         {
             SetProperty(ref _isProvidersStarted, value);
             OnPropertyChanged(nameof(VisionSystemStatus));
-            OnPropertyChanged(nameof(IsStep1Complete));
+            IsStep1Complete = value;
         }
     }
 
@@ -259,13 +294,7 @@ public sealed class MainWindowViewModel : ObservableObject
     public bool HasCameraFeed => FrameLabel != "No frame";
     public bool HasTelemetry => TelemetryLog.Count > 0;
     
-    // Guided Steps
-    public bool IsStep1Complete => IsProvidersStarted;
-    public bool IsStep2Complete => _droneProvider.ConnectionState == DroneConnectionState.Connected;
-    public bool IsStep3Complete => Detections.Count > 0;
-    public bool IsStep4Complete => _targetLockService.CurrentLock != null;
-    public bool IsStep5Complete => IsAutoTracking;
-    public bool IsStep6Complete => TelemetryLog.Count > 0;
+
 
     public string WaypointSummary => $"{_waypointCount} waypoint(s) in current mission";
 
@@ -312,7 +341,7 @@ public sealed class MainWindowViewModel : ObservableObject
             OnPropertyChanged(nameof(Altitude));
             OnPropertyChanged(nameof(FlightMode));
             OnPropertyChanged(nameof(HasTelemetry));
-            OnPropertyChanged(nameof(IsStep6Complete));
+            IsStep6Complete = true;
 
             TelemetryLog.Insert(0, $"{telemetry.Timestamp:HH:mm:ss} BAT {telemetry.BatteryPercent,3}% ALT {telemetry.AltitudeMeters,5:F1} SPD {telemetry.SpeedMetersPerSecond,4:F1}");
             while (TelemetryLog.Count > 12)
@@ -324,7 +353,7 @@ public sealed class MainWindowViewModel : ObservableObject
     {
         Application.Current.Dispatcher.Invoke(() => {
             OnPropertyChanged(nameof(ConnectionStatus));
-            OnPropertyChanged(nameof(IsStep2Complete));
+            IsStep2Complete = state == DroneConnectionState.Connected;
         });
     }
 
@@ -333,11 +362,12 @@ public sealed class MainWindowViewModel : ObservableObject
     {
         Application.Current.Dispatcher.Invoke(async () =>
         {
-            if (FrameLabel == "No frame")
+            var hadCameraFeed = FrameLabel != "No frame";
+            FrameLabel = $"{frame.FrameId} – {frame.Width}×{frame.Height}";
+            if (!hadCameraFeed)
             {
                 OnPropertyChanged(nameof(HasCameraFeed));
             }
-            FrameLabel = $"{frame.FrameId} – {frame.Width}×{frame.Height}";
 
             // 1. Run detection
             var detections = await _visionProvider.DetectAsync(frame);
@@ -380,9 +410,27 @@ public sealed class MainWindowViewModel : ObservableObject
             foreach (var d in detections)
                 Detections.Add(d);
                 
+            TrackedObjectsForUI.Clear();
+            foreach (var t in trackedObjects)
+            {
+                var isLocked = _targetLock?.TrackId == t.TrackId;
+                TrackedObjectsForUI.Add(new TrackedObjectViewModel
+                {
+                    TrackId = t.TrackId,
+                    X = t.Detection.X,
+                    Y = t.Detection.Y,
+                    Width = t.Detection.Width,
+                    Height = t.Detection.Height,
+                    Label = $"{t.Detection.ObjectType} [ID:{t.TrackId}]",
+                    Confidence = t.Detection.Confidence,
+                    IsLocked = isLocked,
+                    OriginalDetection = t.Detection
+                });
+            }
+                
             OnPropertyChanged(nameof(TargetDetectionStatus));
             OnPropertyChanged(nameof(TrackerStatus));
-            OnPropertyChanged(nameof(IsStep3Complete));
+            if (detections.Count > 0) IsStep3Complete = true;
         });
     }
 
@@ -426,7 +474,7 @@ public sealed class MainWindowViewModel : ObservableObject
             OnPropertyChanged(nameof(TargetLockLabel));
             OnPropertyChanged(nameof(TargetConfidenceLabel));
             OnPropertyChanged(nameof(TargetClassLabel));
-            OnPropertyChanged(nameof(IsStep4Complete));
+            IsStep4Complete = _targetLock != null;
             // Refresh auto-tracking command availability when lock changes
             CommandManager.InvalidateRequerySuggested();
         });
@@ -453,12 +501,12 @@ public sealed class MainWindowViewModel : ObservableObject
     /// Called when the user clicks a detection bounding box in the UI.
     /// Resolves the real TrackId from the last tracker output before locking.
     /// </summary>
-    private void LockTarget(DetectionResult? detection)
+    private void LockTarget(TrackedObjectViewModel? tvm)
     {
-        if (detection is null) return;
+        if (tvm is null || tvm.OriginalDetection is null) return;
 
         // Find the TrackedObject whose Detection matches the clicked DetectionResult by ID
-        var tracked = _lastTrackedObjects.FirstOrDefault(t => t.Detection.DetectionId == detection.DetectionId);
+        var tracked = _lastTrackedObjects.FirstOrDefault(t => t.Detection.DetectionId == tvm.OriginalDetection.DetectionId);
 
         if (tracked != null)
         {
@@ -473,7 +521,7 @@ public sealed class MainWindowViewModel : ObservableObject
             // Tracker hasn't seen this detection yet (first frame edge case): fall back
             // to the first non-stale track of the same object type.
             var fallback = _lastTrackedObjects
-                .Where(t => !t.IsStale && t.Detection.ObjectType == detection.ObjectType)
+                .Where(t => !t.IsStale && t.Detection.ObjectType == tvm.OriginalDetection.ObjectType)
                 .OrderBy(t => t.TrackId)
                 .FirstOrDefault();
 
@@ -487,7 +535,7 @@ public sealed class MainWindowViewModel : ObservableObject
             else
             {
                 // Last resort: create a new single-use track
-                _targetLockService.RequestLock(new TrackedObject(-1, detection, false));
+                _targetLockService.RequestLock(new TrackedObject(-1, tvm.OriginalDetection, false));
                 _logger.LogWarning("[LockTarget] No tracked object found; used ephemeral lock.");
             }
         }
@@ -709,33 +757,105 @@ public sealed class MainWindowViewModel : ObservableObject
     private async Task RunDemoAsync()
     {
         IsDemoModeActive = true;
+        DemoProgress = 0;
+        DemoStageText = "Initializing...";
+        DemoTimeRemaining = "15s";
         try
         {
-            // 1. Start Providers
-            await StartProvidersAsync();
-            await Task.Delay(2000);
-
-            // 2. Wait for target to be visible
-            while(Detections.Count == 0) await Task.Delay(500);
+            AddEventFeedItem("Demo: Initializing Demo Mission Loop (Bypassing MAVSDK & Hardware)");
             
-            // 3. Acquire Target Lock
+            // 1. Hot-swap to Demo Providers
+            var originalDrone = _droneProvider;
+            var originalVision = _visionProvider;
+            var originalSimulator = _simulatorProvider;
+
+            _droneProvider.TelemetryUpdated -= OnTelemetryUpdated;
+            _droneProvider.ConnectionStateChanged -= OnDroneConnectionStateChanged;
+            _simulatorProvider.VirtualCameraFrameReady -= OnFrameReady;
+            _visionProvider.VisionEventEmitted -= OnVisionEventEmitted;
+
+            var demoVision = new DroneControl.Integrations.Demo.DemoVisionProvider();
+            var demoDrone = new DroneControl.Integrations.Demo.DemoDroneProvider();
+
+            _droneProvider = demoDrone;
+            _visionProvider = demoVision;
+            _simulatorProvider = demoVision;
+
+            _droneProvider.TelemetryUpdated += OnTelemetryUpdated;
+            _droneProvider.ConnectionStateChanged += OnDroneConnectionStateChanged;
+            _simulatorProvider.VirtualCameraFrameReady += OnFrameReady;
+            _visionProvider.VisionEventEmitted += OnVisionEventEmitted;
+
+            // 2. Start Providers (Connect instantly without timeouts)
+            await _droneProvider.ConnectAsync();
+            await _simulatorProvider.StartAsync();
+            IsProvidersStarted = true;
+            AddEventFeedItem("Demo: Providers Started Instantly.");
+
+            DemoProgress = 20;
+            DemoStageText = "Connecting hardware...";
+            DemoTimeRemaining = "13s";
+            await Task.Delay(1500);
+
+            // 3. Wait for target to be visible (Detection)
+            DemoProgress = 40;
+            DemoStageText = "Scanning for targets...";
+            DemoTimeRemaining = "11s";
+            AddEventFeedItem("Demo: Generating targets...");
+            while (Detections.Count == 0) await Task.Delay(500);
+            
+            // 4. Acquire Target Lock (Locking & Tracking)
             var firstTrack = _lastTrackedObjects.FirstOrDefault();
             if (firstTrack != null)
             {
                 _targetLockService.RequestLock(firstTrack);
-                AddEventFeedItem($"Demo: Target Locked");
+                AddEventFeedItem($"Demo: Target Locked (ID: {firstTrack.TrackId})");
             }
+            DemoProgress = 60;
+            DemoStageText = "Locking target...";
+            DemoTimeRemaining = "10s";
             await Task.Delay(1500);
 
-            // 4. Start tracking pursuit
+            // 5. Start tracking pursuit (Pursuit & Telemetry)
             StartAutoTracking();
             AddEventFeedItem("Demo: Autonomous Pursuit Active");
             
-            await Task.Delay(10000); // Demo for 10s
+            DemoProgress = 80;
+            DemoStageText = "Autonomous pursuit active";
+            for (int i = 0; i < 12; i++)
+            {
+                DemoTimeRemaining = $"{12 - i}s";
+                await Task.Delay(1000); // 12s total
+            }
             
             StopAutoTracking();
-            await StopProvidersAsync();
-            AddEventFeedItem("Demo Complete");
+            await _droneProvider.DisconnectAsync();
+            await _simulatorProvider.StopAsync();
+            DemoProgress = 100;
+            DemoStageText = "Mission Complete";
+            DemoTimeRemaining = "0s";
+            AddEventFeedItem("Demo: Mission Complete.");
+
+            // Restore original providers
+            _droneProvider.TelemetryUpdated -= OnTelemetryUpdated;
+            _droneProvider.ConnectionStateChanged -= OnDroneConnectionStateChanged;
+            _simulatorProvider.VirtualCameraFrameReady -= OnFrameReady;
+            _visionProvider.VisionEventEmitted -= OnVisionEventEmitted;
+
+            _droneProvider = originalDrone;
+            _visionProvider = originalVision;
+            _simulatorProvider = originalSimulator;
+
+            _droneProvider.TelemetryUpdated += OnTelemetryUpdated;
+            _droneProvider.ConnectionStateChanged += OnDroneConnectionStateChanged;
+            _simulatorProvider.VirtualCameraFrameReady += OnFrameReady;
+            _visionProvider.VisionEventEmitted += OnVisionEventEmitted;
+            
+            IsProvidersStarted = false;
+        }
+        catch (Exception ex)
+        {
+            AddEventFeedItem($"Demo failed: {ex.Message}");
         }
         finally
         {
