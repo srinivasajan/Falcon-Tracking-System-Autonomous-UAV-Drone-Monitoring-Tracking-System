@@ -20,6 +20,13 @@ class Program
 {
     static async Task Main(string[] args)
     {
+        // Phase 1 Req 6: Live SITL GotoAsync validation
+        if (args.Length > 0 && args[0] == "--sitl")
+        {
+            await AutonomousPursuitValidator.RunAsync();
+            return;
+        }
+
         Console.WriteLine("=== PHASE 7, 8, 9 ZERO TRUST VALIDATION ===");
         var services = new ServiceCollection();
         services.AddLogging();

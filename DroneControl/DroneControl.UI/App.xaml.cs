@@ -56,24 +56,37 @@ public partial class App : Application
                     context.Configuration.GetSection("DroneControl:PX4"));
                 services.Configure<DroneControl.Integrations.MAVSDK.MavsdkProviderOptions>(
                     context.Configuration.GetSection("DroneControl:MAVSDK"));
+
                 services.AddSingleton<StoragePaths>();
                 services.AddDroneControlRuntimeManagement();
                 services.AddDroneControlStorage();
                 services.AddSingleton<ITargetLockService, TargetLockService>();
 
-                // All providers start as mocks. In Simulation/Real mode, IDroneProvider
-                // is overridden with PX4Provider (last-registration wins in MS DI).
+                // Step 1: register mock providers (simulator, mock vision, mock tracking, FFmpeg)
                 services.AddDevelopmentMockProviders();
-                
-                // Override Vision and Tracking with real implementations
-                services.AddVisionTrackingProviders();
+
+                // Step 2: upgrade tracker to IoU in ALL modes
+                //         (IouTrackingProvider is last-registered → wins over mock tracker)
+                services.AddIouTrackerOnly();
+
+                // Step 3: register CommandPlanner so the UI can plan commands
+                services.AddCommandPlanner();
 
                 var providerMode = context.Configuration["DroneControl:Mode"] ?? "Mock";
-                if (providerMode.Equals("Simulation", StringComparison.OrdinalIgnoreCase) ||
-                    providerMode.Equals("Real", StringComparison.OrdinalIgnoreCase))
+
+                if (providerMode.Equals("Real", StringComparison.OrdinalIgnoreCase))
                 {
+                    // Real mode: use YOLO + real drone
+                    services.AddVisionTrackingProviders();
                     services.AddPx4MavsdkProviders();
                 }
+                else if (providerMode.Equals("Simulation", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Simulation mode: mock vision/simulator, real drone (MAVSDK/PX4 SITL)
+                    // Vision stays as TemporaryMockVisionProvider (no camera HW needed)
+                    services.AddPx4MavsdkProviders();
+                }
+                // Mock mode: everything stays as mocks
 
                 services.AddTransient<ReplayViewModel>(provider =>
                     new ReplayViewModel(

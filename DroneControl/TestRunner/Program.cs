@@ -17,11 +17,17 @@ namespace TestRunner;
 
 public static class Program
 {
-    public static async Task Main()
+    public static async Task Main(string[] args)
     {
-        Console.WriteLine("=== PHASE 7, 8, 9 VALIDATIONS ===");
+        // Phase 1 completion sprint — run first
+        Console.WriteLine("=== PHASE 1 PIPELINE VALIDATION ===");
+        bool phase1Pass = await DroneControl.TestRunner.Phase1PipelineValidation.RunAsync();
+
+        Console.WriteLine("\n=== PHASE 7, 8, 9 VALIDATIONS ===");
         await UnifiedReplayValidation.RunAsync();
         Console.WriteLine("\n-----------------------------------\n");
         await MissionExecutionValidation.RunAsync();
+
+        Console.WriteLine($"\nPhase 1 Overall: {(phase1Pass ? "PASS ✅" : "FAIL ❌")}");
     }
 }

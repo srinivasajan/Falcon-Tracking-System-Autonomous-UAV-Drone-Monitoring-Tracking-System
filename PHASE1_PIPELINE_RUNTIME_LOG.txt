@@ -1,0 +1,70 @@
+﻿C:\Personal Coding\Projects\Falcon Drone System\DroneControl\TestRunner\TestRunner.csproj : warning NU1701: Package 'OpenTK 3.3.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.
+C:\Personal Coding\Projects\Falcon Drone System\DroneControl\TestRunner\TestRunner.csproj : warning NU1701: Package 'OpenTK.GLWpfControl 3.3.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.
+C:\Personal Coding\Projects\Falcon Drone System\DroneControl\TestRunner\TestRunner.csproj : warning NU1701: Package 'SkiaSharp.Views.WPF 3.119.2' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.
+C:\Personal Coding\Projects\Falcon Drone System\DroneControl\DroneControl.UI\DroneControl.UI.csproj : warning NU1701: Package 'OpenTK 3.3.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project. [C:\Personal Coding\Projects\Falcon Drone System\DroneControl\TestRunner\TestRunner.csproj]
+C:\Personal Coding\Projects\Falcon Drone System\DroneControl\DroneControl.UI\DroneControl.UI.csproj : warning NU1701: Package 'OpenTK.GLWpfControl 3.3.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project. [C:\Personal Coding\Projects\Falcon Drone System\DroneControl\TestRunner\TestRunner.csproj]
+C:\Personal Coding\Projects\Falcon Drone System\DroneControl\DroneControl.UI\DroneControl.UI.csproj : warning NU1701: Package 'SkiaSharp.Views.WPF 3.119.2' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project. [C:\Personal Coding\Projects\Falcon Drone System\DroneControl\TestRunner\TestRunner.csproj]
+C:\Personal Coding\Projects\Falcon Drone System\DroneControl\TestRunner\TestRunner.csproj : warning NU1701: Package 'OpenTK 3.3.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.
+C:\Personal Coding\Projects\Falcon Drone System\DroneControl\TestRunner\TestRunner.csproj : warning NU1701: Package 'OpenTK.GLWpfControl 3.3.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.
+C:\Personal Coding\Projects\Falcon Drone System\DroneControl\TestRunner\TestRunner.csproj : warning NU1701: Package 'SkiaSharp.Views.WPF 3.119.2' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.
+C:\Personal Coding\Projects\Falcon Drone System\DroneControl\DroneControl.UI\DroneControl.UI.csproj : warning NU1701: Package 'OpenTK 3.3.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.
+C:\Personal Coding\Projects\Falcon Drone System\DroneControl\DroneControl.UI\DroneControl.UI.csproj : warning NU1701: Package 'OpenTK.GLWpfControl 3.3.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.
+C:\Personal Coding\Projects\Falcon Drone System\DroneControl\DroneControl.UI\DroneControl.UI.csproj : warning NU1701: Package 'SkiaSharp.Views.WPF 3.119.2' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.
+=== PHASE 1 PIPELINE VALIDATION ===
+
+========================================================
+  PHASE 1 PIPELINE VALIDATION ÔÇö Zero-Trust Runtime Test
+========================================================
+
+[DI] IVisionProvider   ÔåÆ TemporaryMockVisionProvider
+[DI] ITrackingProvider ÔåÆ IouTrackingProvider
+[DI] ICommandPlanner   ÔåÆ CommandPlanner
+
+Frame 01: 5 detections | 5 tracks [TRK-1(Person), TRK-2(Car), TRK-3(Truck), TRK-4(Bicycle), TRK-5(Motorcycle)]info: DroneControl.Core.Services.TargetLockService[0]
+      Target lock acquired on TrackId 1 (Person).
+ | ­ƒôí GOTO Lat=47.397788 Lon=8.545516 Alt=10.0 | ­ƒÄ» TRACK pitch=-10┬░ yaw=-15┬░
+Frame 02: 5 detections | 5 tracks [TRK-1(Person), TRK-2(Car), TRK-3(Truck), TRK-4(Bicycle), TRK-5(Motorcycle)]info: DroneControl.Core.Services.TargetLockService[0]
+      Target lock acquired on TrackId 1 (Person).
+ | ­ƒôí GOTO Lat=47.397788 Lon=8.545517 Alt=10.0 | ­ƒÄ» TRACK pitch=-10┬░ yaw=-15┬░
+Frame 03: 5 detections | 5 tracks [TRK-1(Person), TRK-2(Car), TRK-3(Truck), TRK-4(Bicycle), TRK-5(Motorcycle)]info: DroneControl.Core.Services.TargetLockService[0]
+      Target lock acquired on TrackId 1 (Person).
+ | ­ƒôí GOTO Lat=47.397789 Lon=8.545517 Alt=10.0 | ­ƒÄ» TRACK pitch=-10┬░ yaw=-15┬░
+Frame 04: 5 detections | 5 tracks [TRK-1(Person), TRK-2(Car), TRK-3(Truck), TRK-4(Bicycle), TRK-5(Motorcycle)] | ­ƒôí GOTO Lat=47.397789 Lon=8.545517 Alt=10.0 | ­ƒÄ» TRACK pitch=-10┬░ yaw=-15┬░
+info: DroneControl.Core.Services.TargetLockService[0]
+      Target lock acquired on TrackId 1 (Person).
+Frame 05: 5 detections | 5 tracks [TRK-1(Person), TRK-2(Car), TRK-3(Truck), TRK-4(Bicycle), TRK-5(Motorcycle)] | ­ƒôí GOTO Lat=47.397789 Lon=8.545518 Alt=10.0 | ­ƒÄ» TRACK pitch=-10┬░ yaw=-15┬░
+info: DroneControl.Core.Services.TargetLockService[0]
+      Target lock acquired on TrackId 1 (Person).
+Frame 06: 5 detections | 5 tracks [TRK-1(Person), TRK-2(Car), TRK-3(Truck), TRK-4(Bicycle), TRK-5(Motorcycle)] | ­ƒôí GOTO Lat=47.397790 Lon=8.545518 Alt=10.0 | ­ƒÄ» TRACK pitch=-10┬░ yaw=-15┬░
+info: DroneControl.Core.Services.TargetLockService[0]
+      Target lock acquired on TrackId 1 (Person).
+Frame 07: 5 detections | 5 tracks [TRK-1(Person), TRK-2(Car), TRK-3(Truck), TRK-4(Bicycle), TRK-5(Motorcycle)] | ­ƒôí GOTO Lat=47.397790 Lon=8.545518 Alt=10.0 | ­ƒÄ» TRACK pitch=-10┬░ yaw=-15┬░
+Frame 08: 5 detectionsinfo: DroneControl.Core.Services.TargetLockService[0]
+      Target lock acquired on TrackId 1 (Person).
+ | 5 tracks [TRK-1(Person), TRK-2(Car), TRK-3(Truck), TRK-4(Bicycle), TRK-5(Motorcycle)] | ­ƒôí GOTO Lat=47.397791 Lon=8.545519 Alt=10.0 | ­ƒÄ» TRACK pitch=-10┬░ yaw=-15┬░
+info: DroneControl.Core.Services.TargetLockService[0]
+      Target lock acquired on TrackId 1 (Person).
+Frame 09: 5 detections | 5 tracks [TRK-1(Person), TRK-2(Car), TRK-3(Truck), TRK-4(Bicycle), TRK-5(Motorcycle)] | ­ƒôí GOTO Lat=47.397791 Lon=8.545519 Alt=10.0info: DroneControl.Core.Services.TargetLockService[0]
+      Target lock acquired on TrackId 1 (Person).
+ | ­ƒÄ» TRACK pitch=-10┬░ yaw=-15┬░
+Frame 10: 5 detections | 5 tracks [TRK-1(Person), TRK-2(Car), TRK-3(Truck), TRK-4(Bicycle), TRK-5(Motorcycle)]info: DroneControl.Core.Services.TargetLockService[0]
+      Target lock acquired on TrackId 1 (Person).
+ | ­ƒôí GOTO Lat=47.397792 Lon=8.545519 Alt=10.0 | ­ƒÄ» TRACK pitch=-10┬░ yaw=-15┬░
+
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+Frames processed      : 10/10
+Successful locks      : 10
+Goto commands issued  : 10
+
+[Stability Check] Verifying TrackId stability across 5 extra frames...
+  Frame 2: Person TrackId=1 (base=1) Ô£à STABLE
+  Frame 3: Person TrackId=1 (base=1) Ô£à STABLE
+  Frame 4: Person TrackId=1 (base=1) Ô£à STABLE
+  Frame 5: Person TrackId=1 (base=1) Ô£à STABLE
+
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+Req 1 ÔÇô Accept target          : Ô£à PASS
+Req 2 ÔÇô Detect target          : Ô£à PASS
+Req 3 ÔÇô Continuous tracking    : Ô£à PASS
+Req 4 ÔÇô Navigation commands    : Ô£à PASS
+Req 5 ÔÇô Simulation mode        : Ô£à PASS (no drone HW used)
