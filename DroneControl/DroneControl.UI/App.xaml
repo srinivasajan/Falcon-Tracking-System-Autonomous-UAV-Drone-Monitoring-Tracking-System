@@ -1,0 +1,12 @@
+<Application x:Class="DroneControl.UI.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnMainWindowClose">
+    <Application.Resources>
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#F4F6F8" />
+        <SolidColorBrush x:Key="PanelBrush" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#167F92" />
+        <SolidColorBrush x:Key="DangerBrush" Color="#C64545" />
+        <SolidColorBrush x:Key="TextBrush" Color="#1E2933" />
+    </Application.Resources>
+</Application>

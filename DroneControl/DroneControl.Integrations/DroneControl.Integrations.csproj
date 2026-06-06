@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="FFMpegCore" Version="5.4.0" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.DirectML" Version="1.24.4" />
+    <PackageReference Include="YoloV8" Version="5.3.0" />
+    <ProjectReference Include="..\DroneControl.Core\DroneControl.Core.csproj" />
+    <ProjectReference Include="..\DroneControl.Runtime\DroneControl.Runtime.csproj" />
+    <PackageReference Include="Google.Protobuf" Version="3.27.3" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.65.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.66.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Protobuf Include="MAVSDK\Protos\mavsdk_options.proto" ProtoRoot="MAVSDK\Protos" GrpcServices="None" />
+    <Protobuf Include="MAVSDK\Protos\action\action.proto" ProtoRoot="MAVSDK\Protos" GrpcServices="Client" />
+    <Protobuf Include="MAVSDK\Protos\core\core.proto" ProtoRoot="MAVSDK\Protos" GrpcServices="Client" />
+    <Protobuf Include="MAVSDK\Protos\telemetry\telemetry.proto" ProtoRoot="MAVSDK\Protos" GrpcServices="Client" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,48 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneControl.Core", "DroneControl.Core\DroneControl.Core.csproj", "{D7F83478-2C26-4C14-A528-3F7C86EFB1C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneControl.Integrations", "DroneControl.Integrations\DroneControl.Integrations.csproj", "{55D38035-4EC2-44D8-8222-505198FD4E26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneControl.Plugins", "DroneControl.Plugins\DroneControl.Plugins.csproj", "{8D39C293-4D22-44E8-972D-6F8FD9FA5E5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneControl.Runtime", "DroneControl.Runtime\DroneControl.Runtime.csproj", "{2F5D9076-5F22-4D5F-9E6B-0C4E330D6604}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneControl.Storage", "DroneControl.Storage\DroneControl.Storage.csproj", "{85AC8F67-7334-4A01-9D5E-1099F86952F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneControl.UI", "DroneControl.UI\DroneControl.UI.csproj", "{B6CA55CC-A950-4A0C-A28E-B86B04262FC8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7F83478-2C26-4C14-A528-3F7C86EFB1C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7F83478-2C26-4C14-A528-3F7C86EFB1C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7F83478-2C26-4C14-A528-3F7C86EFB1C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7F83478-2C26-4C14-A528-3F7C86EFB1C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55D38035-4EC2-44D8-8222-505198FD4E26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55D38035-4EC2-44D8-8222-505198FD4E26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55D38035-4EC2-44D8-8222-505198FD4E26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55D38035-4EC2-44D8-8222-505198FD4E26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D39C293-4D22-44E8-972D-6F8FD9FA5E5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D39C293-4D22-44E8-972D-6F8FD9FA5E5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D39C293-4D22-44E8-972D-6F8FD9FA5E5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D39C293-4D22-44E8-972D-6F8FD9FA5E5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F5D9076-5F22-4D5F-9E6B-0C4E330D6604}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F5D9076-5F22-4D5F-9E6B-0C4E330D6604}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F5D9076-5F22-4D5F-9E6B-0C4E330D6604}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F5D9076-5F22-4D5F-9E6B-0C4E330D6604}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85AC8F67-7334-4A01-9D5E-1099F86952F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85AC8F67-7334-4A01-9D5E-1099F86952F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85AC8F67-7334-4A01-9D5E-1099F86952F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85AC8F67-7334-4A01-9D5E-1099F86952F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6CA55CC-A950-4A0C-A28E-B86B04262FC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6CA55CC-A950-4A0C-A28E-B86B04262FC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6CA55CC-A950-4A0C-A28E-B86B04262FC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6CA55CC-A950-4A0C-A28E-B86B04262FC8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
